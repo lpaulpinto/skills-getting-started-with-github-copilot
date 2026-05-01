@@ -7,7 +7,7 @@ for extracurricular activities at Mergington High School.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import os
 from pathlib import Path
 
@@ -85,7 +85,7 @@ def root():
 
 @app.get("/activities")
 def get_activities():
-    return activities
+    return JSONResponse(content=activities, headers={"Cache-Control": "no-store"})
 
 
 @app.post("/activities/{activity_name}/signup")
@@ -104,7 +104,7 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Add student
     activity["participants"].append(email)
-    return {"message": f"Signed up {email} for {activity_name}"}
+    return {"message": f"Signed up {email} for {activity_name}", "activity": activity}
 
 
 @app.delete("/activities/{activity_name}/participants/{email}")
